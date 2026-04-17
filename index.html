@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Unit 5 英語互動站 - Anny老師</title>
+    <style>
+        :root {
+            --primary: #4A90E2; --secondary: #F5A623; --success: #7ED321; --danger: #FF5E5E; --bg: #F0F4F8; --quiz-purple: #6C63FF; --dark: #333;
+        }
+        * { touch-action: manipulation; box-sizing: border-box; }
+        body { font-family: -apple-system, sans-serif; background-color: var(--bg); margin: 0; display: flex; flex-direction: column; align-items: center; min-height: 100vh; overflow-x: hidden; }
+        nav { width: 100%; background: white; box-shadow: 0 2px 8px rgba(0,0,0,0.1); display: flex; justify-content: center; gap: 4px; padding: 12px 5px; position: sticky; top: 0; z-index: 100; }
+        .nav-btn { flex: 1; max-width: 85px; padding: 10px 0; border-radius: 12px; border: 2px solid var(--primary); background: transparent; color: var(--primary); font-weight: bold; font-size: 0.8rem; cursor: pointer; text-align: center; }
+        .nav-btn.active { background: var(--primary); color: white; }
+        .container { width: 95%; max-width: 650px; margin-top: 15px; display: none; flex-direction: column; align-items: center; padding-bottom: 50px; }
+        .container.active { display: flex; }
+        
+        /* 翻卡手機放大版 */
+        .flip-card { background-color: transparent; width: 100%; height: 450px; perspective: 1000px; margin-bottom: 15px; cursor: pointer; }
+        .flip-card-inner { position: relative; width: 100%; height: 100%; text-align: center; transition: transform 0.6s; transform-style: preserve-3d; }
+        .flip-card.flipped .flip-card-inner { transform: rotateY(180deg); }
+        .flip-card-front, .flip-card-back { position: absolute; width: 100%; height: 100%; -webkit-backface-visibility: hidden; backface-visibility: hidden; border-radius: 25px; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 25px; box-shadow: 0 10px 20px rgba(0,0,0,0.08); border: 1px solid #eee; }
+        .flip-card-front { background-color: white; }
+        .flip-card-back { background-color: white; transform: rotateY(180deg); }
+
+        .word { font-size: 3rem; color: var(--primary); font-weight: bold; margin-bottom: 8px; }
+        .pos { color: #888; font-style: italic; margin-bottom: 12px; font-size: 1.1rem; }
+        .def-en { font-size: 1.15rem; color: #444; line-height: 1.5; font-style: italic; }
+        .def-ch { font-size: 1.8rem; color: #222; font-weight: bold; margin-top: 10px; }
+        .extra-info { font-size: 1.1rem; color: var(--dark); background: #fdf2e9; padding: 15px; border-radius: 15px; width: 100%; margin-top: 25px; text-align: center; border: 1px solid var(--secondary); }
+
+        /* Match 網格 3*4 排版 */
+        #match-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; width: 100%; }
+        .match-item { background: white; border: 2px solid #E5E7EB; border-radius: 12px; min-height: 90px; display: flex; align-items: center; justify-content: center; font-size: 1rem; font-weight: bold; cursor: pointer; text-align: center; padding: 8px; transition: 0.2s; }
+        .match-item.selected { border-color: var(--primary); background: #EBF4FF; }
+        .match-item.correct { visibility: hidden; opacity: 0; }
+
+        .btn-main { width: 100%; min-height: 60px; border-radius: 15px; font-size: 1.2rem; font-weight: bold; margin-bottom: 12px; cursor: pointer; border: none; }
+        .feedback { min-height: 45px; margin-top: 10px; font-weight: bold; font-size: 1.3rem; text-align: center; }
+
+        .quiz-audio-btn { width: 100px; height: 100px; background: var(--quiz-purple); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 3rem; margin: 10px auto 20px; border: none; cursor: pointer; }
+        .quiz-options { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; width: 100%; }
+        .option-btn { background: white; border: 2px solid #E5E7EB; border-radius: 15px; padding: 15px 10px; font-size: 1rem; cursor: pointer; min-height: 75px; color: #333; font-weight: 500; }
+
+        .report-item { width: 100%; display: flex; justify-content: space-between; align-items: center; padding: 18px 0; border-bottom: 1px solid #EEE; }
+        .report-label { font-weight: bold; color: #555; font-size: 1.1rem; }
+        .report-val { color: var(--primary); font-weight: 800; font-size: 1.2rem; }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <button class="nav-btn active" onclick="showPage('learn')">Learn</button>
+        <button class="nav-btn" onclick="showPage('game')">Game</button>
+        <button class="nav-btn" onclick="showPage('quiz')">Quiz</button>
+        <button class="nav-btn" onclick="showPage('match')">Match</button>
+        <button class="nav-btn" onclick="showPage('report')">Report</button>
+    </nav>
+
+    <div id="learn" class="container active">
+        <div class="flip-card" onclick="this.classList.toggle('flipped')">
+            <div class="flip-card-inner" id="learn-card-inner"></div>
+        </div>
+        <button class="btn-main" style="background:var(--secondary); color:white;" onclick="handleSpeak(); event.stopPropagation();">🔊 Listen (聽音)</button>
+        <button class="btn-main" style="background:var(--primary); color:white;" onclick="handlePractice(); event.stopPropagation();">🎤 Practice (開口練)</button>
+        <div id="learn-feedback" class="feedback"></div>
+        <button class="btn-main" style="background:var(--dark); color:white;" onclick="nextLearnWord(); event.stopPropagation();">Next 單字 →</button>
+    </div>
+
+    <div id="game" class="container">
+        <div style="background:white; border-radius:20px; padding:20px; width:100%; text-align:center; box-shadow:0 8px 15px rgba(0,0,0,0.05);">
+            <div style="display:flex; justify-content:space-between; font-weight:bold; margin-bottom:20px;">
+                <span>Score: <span id="game-score-display">0</span></span>
+                <span style="color:var(--danger);">Time: <span id="game-time-display">60</span>s</span>
+            </div>
+            <div id="game-word-display" class="word" style="margin: 40px 0;">READY?</div>
+            <div id="game-feedback" class="feedback"></div>
+        </div>
+        <button id="game-start-btn" class="btn-main" style="background:var(--success); color:white; margin-top:20px;" onclick="startGame()">START CHALLENGE</button>
+    </div>
+
+    <div id="quiz" class="container">
+        <div style="background:white; border-radius:20px; padding:20px; width:100%; text-align:center; box-shadow:0 8px 15px rgba(0,0,0,0.05);" id="quiz-main-card">
+            <div style="display:flex; justify-content:space-between; margin-bottom:15px; font-weight:bold; color:#666;">
+                <span>題目: <span id="quiz-num">1</span> / 10</span>
+                <span>得分: <span id="quiz-score-display">0</span></span>
+            </div>
+            <button class="quiz-audio-btn" onclick="playQuizAudio()">🔊</button>
+            <div id="quiz-options" class="quiz-options"></div>
+        </div>
+        <div id="quiz-feedback" class="feedback"></div>
+        <button id="quiz-retry-btn" class="btn-main" style="background:var(--primary); color:white; display:none;" onclick="startQuizSession()">Restart Quiz (重新開始)</button>
+    </div>
+
+    <div id="match" class="container">
+        <div style="background:white; border-radius:20px; padding:20px; width:100%; text-align:center; box-shadow:0 8px 15px rgba(0,0,0,0.05);">
+            <div style="display:flex; justify-content:space-between; font-weight:bold; margin-bottom:10px;">
+                <span>Match Game</span>
+                <span style="color:var(--primary);">Time: <span id="match-timer">0</span>s</span>
+            </div>
+            <p style="font-size: 0.95rem; color: var(--dark); margin: 0 0 5px; font-weight: 800;">Please match the vocabulary with its synonym or antonym.</p>
+            <p style="font-size: 0.85rem; color: #666; margin: 0 0 15px;">請選出本課單字的同義字或反義字</p>
+            <div id="match-grid"></div>
+        </div>
+        <button id="match-start-btn" class="btn-main" style="background:var(--success); color:white; margin-top:20px;" onclick="startMatchGame()">開始挑戰</button>
+        <div id="match-feedback" class="feedback"></div>
+    </div>
+
+    <div id="report" class="container">
+        <div style="background:white; border-radius:20px; padding:25px; width:100%; box-shadow:0 8px 15px rgba(0,0,0,0.05);">
+            <h2 style="margin-top:0">Progress Report</h2>
+            <div class="report-item"><span class="report-label">Game 最高分</span><span class="report-val"><span id="best-game">0</span> 分</span></div>
+            <div class="report-item"><span class="report-label">Quiz 最高得分</span><span class="report-val"><span id="best-quiz">0</span> / 100</span></div>
+            <div class="report-item"><span class="report-label">Match 最快紀錄</span><span class="report-val"><span id="best-match">--</span> 秒</span></div>
+        </div>
+    </div>
+
+    <script>
+        const vocabulary = [
+            { word: "truth", pos: "n. sing.", def_en: "a fact that is accepted by most people as being true", def_ch: "真相，事實", syn: "fact, reality", ant: "lie, fiction" },
+            { word: "truthful", pos: "adj.", def_en: "saying only things that are true; honest", def_ch: "誠實的，真實的", syn: "honest, sincere", ant: "dishonest, fake" },
+            { word: "actually", pos: "adv.", def_en: "in fact; used to emphasize what is real", def_ch: "事實上，實際上", syn: "really, virtually", ant: "theoretically" },
+            { word: "conclusion", pos: "n. [C]", def_en: "a decision or opinion after considering all info", def_ch: "結論", syn: "result, end", ant: "start, beginning" },
+            { word: "appeal", pos: "vi.", def_en: "to try to persuade by reminding of what is fair", def_ch: "啟發，打動", syn: "attract, interest", ant: "repel, disgust" },
+            { word: "majority", pos: "n. sing.", def_en: "the largest number of people in a group", def_ch: "大多數，大部分", syn: "most, bulk", ant: "minority" },
+            { word: "major", pos: "adj.", def_en: "more important, bigger, or more serious", def_ch: "主要的，重大的", syn: "important, significant", ant: "minor, trivial" },
+            { word: "commit", pos: "vt.", def_en: "to do something that is considered wrong/illegal", def_ch: "犯下(罪或錯誤)", syn: "execute, perform", ant: "avoid, stop" },
+            { word: "guarantee", pos: "vt.", def_en: "to promise that something will happen", def_ch: "保證，擔保", syn: "promise, assure", ant: "uncertainty" },
+            { word: "opponent", pos: "n. [C]", def_en: "a person who tries to win against another", def_ch: "對手，敵手", syn: "rival, enemy", ant: "ally, partner" },
+            { word: "version", pos: "n. [C]", def_en: "a different form of the same thing", def_ch: "版本，樣式", syn: "form, variant", ant: "original" },
+            { word: "authority", pos: "n. [C]", def_en: "a person whose opinions are respected in a subject", def_ch: "權威人士，專家", syn: "expert, specialist", ant: "amateur, novice" },
+            { word: "relevant", pos: "adj.", def_en: "related to what is being discussed", def_ch: "相關的", syn: "related, pertinent", ant: "irrelevant" },
+            { word: "accurate", pos: "adj.", def_en: "correct and exact in every detail", def_ch: "準確的，正確的", syn: "correct, precise", ant: "wrong, inaccurate" }
+        ];
+
+        let bestScores = { game: 0, quiz: 0, match: null };
+        let quizUsed = [], matchUsed = [];
+        const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
+        let mainRec = new SpeechRec(); mainRec.lang = 'en-US';
+
+        function showPage(id) {
+            document.querySelectorAll('.container').forEach(c => c.classList.remove('active'));
+            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+            const btns = document.querySelectorAll('.nav-btn');
+            btns.forEach(b => { if(b.innerText.toLowerCase() === id) b.classList.add('active'); });
+            window.speechSynthesis.cancel(); gameActive = false; clearInterval(window.matchInt);
+            try { mainRec.stop(); } catch(e) {}
+            if(id === 'report') updateReport();
+            if(id === 'learn') updateLearn();
+            if(id === 'quiz') startQuizSession();
+        }
+
+        function globalSpeak(text) { window.speechSynthesis.cancel(); const u = new SpeechSynthesisUtterance(text); u.lang = 'en-US'; u.rate = 0.9; window.speechSynthesis.speak(u); }
+
+        // --- Learn ---
+        let learnIdx = 0;
+        function updateLearn() {
+            const d = vocabulary[learnIdx];
+            const card = document.querySelector('.flip-card');
+            if(card) card.classList.remove('flipped');
+            let extraHtml = `<div class="extra-info"><strong>同義字</strong><br>${d.syn}`;
+            if(d.ant) extraHtml += `<br><br><strong>反義字</strong><br>${d.ant}`;
+            extraHtml += `</div>`;
+            document.getElementById('learn-card-inner').innerHTML = `
+                <div class="flip-card-front"><div class="word" style="font-size:2.8rem;">${d.word}</div><div class="pos">${d.pos}</div><div class="def-en">${d.def_en}</div><p style="color:var(--primary); font-size:0.9rem; margin-top:25px; font-weight:bold;">(Click to See Chinese / 點擊看中文)</p></div>
+                <div class="flip-card-back"><div class="word" style="font-size:2.8rem;">${d.word}</div><div class="def-ch">${d.def_ch}</div>${extraHtml}</div>`;
+            document.getElementById('learn-feedback').innerText = "";
+        }
+        function nextLearnWord() { learnIdx = (learnIdx + 1) % vocabulary.length; updateLearn(); }
+        function handleSpeak() { globalSpeak(vocabulary[learnIdx].word); }
+        function handlePractice() {
+            const fb = document.getElementById('learn-feedback'); fb.innerText = "Listening... 🎤";
+            mainRec.onresult = (e) => {
+                const heard = e.results[0][0].transcript.toLowerCase();
+                if(heard.includes(vocabulary[learnIdx].word.toLowerCase())) { fb.innerText = "Correct! ✨"; fb.style.color = "var(--success)"; }
+                else { fb.innerText = "Try again! ❌"; fb.style.color = "var(--danger)"; }
+            };
+            try { mainRec.start(); } catch(e) {}
+        }
+
+        // --- Game ---
+        let gameActive = false, gameScore = 0;
+        function startGame() {
+            gameActive = true; gameScore = 0; let time = 60;
+            document.getElementById('game-score-display').innerText = "0";
+            document.getElementById('game-start-btn').style.display = 'none';
+            const timer = setInterval(() => {
+                time--; document.getElementById('game-time-display').innerText = time;
+                if(time <= 0 || !gameActive) { clearInterval(timer); gameActive = false; if(gameScore > bestScores.game) bestScores.game = gameScore; document.getElementById('game-start-btn').style.display = 'block'; }
+            }, 1000);
+            loadNextGameWord();
+        }
+        function loadNextGameWord() {
+            if(!gameActive) return;
+            let target = vocabulary[Math.floor(Math.random()*vocabulary.length)].word;
+            document.getElementById('game-word-display').innerText = target;
+            mainRec.onresult = (e) => { if(e.results[0][0].transcript.toLowerCase().includes(target.toLowerCase())) { gameScore += 10; document.getElementById('game-score-display').innerText = gameScore; loadNextGameWord(); } };
+            mainRec.onend = () => { if(gameActive) try { mainRec.start(); } catch(e) {} };
+            try { mainRec.start(); } catch(e) {}
+        }
+
+        // --- Quiz ---
+        function startQuizSession() {
+            quizUsed = []; quizSession = { num: 1, score: 0 };
+            document.getElementById('quiz-retry-btn').style.display='none';
+            document.getElementById('quiz-main-card').style.display='block';
+            loadQuiz();
+        }
+        function loadQuiz() {
+            const container = document.getElementById('quiz-options'); const fb = document.getElementById('quiz-feedback');
+            if (quizSession.num > 10) {
+                if(quizSession.score > bestScores.quiz) bestScores.quiz = quizSession.score;
+                fb.innerText = "測驗完成！"; document.getElementById('quiz-main-card').style.display='none'; document.getElementById('quiz-retry-btn').style.display='block'; return;
+            }
+            document.getElementById('quiz-num').innerText = quizSession.num; document.getElementById('quiz-score-display').innerText = quizSession.score;
+            let pool = vocabulary.filter(v => !quizUsed.includes(v.word));
+            let target = pool[Math.floor(Math.random()*pool.length)];
+            quizSession.curTarget = target; quizUsed.push(target.word);
+            let opts = [target.def_ch];
+            while(opts.length < 4) { let r = vocabulary[Math.floor(Math.random()*vocabulary.length)].def_ch; if(!opts.includes(r)) opts.push(r); }
+            opts.sort(()=>0.5-Math.random()); container.innerHTML = '';
+            opts.forEach(opt => {
+                const b = document.createElement('button'); b.className = 'option-btn'; b.innerText = opt;
+                b.onclick = () => { if(opt === target.def_ch) { quizSession.score += 10; document.getElementById('quiz-score-display').innerText = quizSession.score; quizSession.num++; setTimeout(loadQuiz, 800); } else { b.style.background = "#FFEBEE"; } };
+                container.appendChild(b);
+            });
+            globalSpeak(target.word);
+        }
+
+        // --- Match (3*4) ---
+        let matchActive = false, mTime = 0, firstCard = null, matchesFound = 0;
+        function startMatchGame() {
+            document.getElementById('match-start-btn').style.display = 'none';
+            document.getElementById('match-feedback').innerText = "";
+            matchesFound = 0; mTime = 0; matchActive = true;
+            clearInterval(window.matchInt);
+            window.matchInt = setInterval(() => { mTime++; document.getElementById('match-timer').innerText = mTime; }, 1000);
+            
+            let pool = vocabulary.filter(v => !matchUsed.includes(v.word));
+            if(pool.length < 6) { matchUsed = []; pool = vocabulary; }
+            let sub = pool.sort(() => 0.5 - Math.random()).slice(0, 6);
+            sub.forEach(s => matchUsed.push(s.word));
+
+            let cards = [];
+            sub.forEach(v => { cards.push({ id: v.word, text: v.word }); cards.push({ id: v.word, text: v.syn.split(',')[0] }); });
+            cards.sort(() => 0.5 - Math.random());
+
+            const grid = document.getElementById('match-grid'); grid.innerHTML = '';
+            cards.forEach(item => {
+                const div = document.createElement('div');
+                div.className = 'match-item'; div.innerText = item.text;
+                div.onclick = () => {
+                    if (!matchActive || div.classList.contains('correct') || div === firstCard?.div) return;
+                    div.classList.add('selected');
+                    if (!firstCard) { firstCard = { div, item }; } 
+                    else {
+                        if (firstCard.item.id === item.id) {
+                            div.classList.add('correct'); firstCard.div.classList.add('correct');
+                            matchesFound++;
+                            if (matchesFound === 6) { 
+                                clearInterval(window.matchInt); if (!bestScores.match || mTime < bestScores.match) bestScores.match = mTime;
+                                document.getElementById('match-feedback').innerText = "Finish! " + mTime + "s";
+                                document.getElementById('match-start-btn').style.display = 'block';
+                            }
+                            firstCard = null;
+                        } else {
+                            matchActive = false; div.style.background = "var(--danger)"; firstCard.div.style.background = "var(--danger)";
+                            setTimeout(() => { div.classList.remove('selected'); firstCard.classList.remove('selected'); div.style.background = ""; firstCard.div.style.background = ""; firstCard = null; matchActive = true; }, 600);
+                        }
+                    }
+                }; grid.appendChild(div);
+            });
+        }
+        function playQuizAudio() { if(quizSession.curTarget) globalSpeak(quizSession.curTarget.word); }
+        function updateReport() {
+            document.getElementById('best-game').innerText = bestScores.game;
+            document.getElementById('best-quiz').innerText = bestScores.quiz;
+            document.getElementById('best-match').innerText = bestScores.match || "--";
+        }
+        updateLearn();
+    </script>
+</body>
+</html>
