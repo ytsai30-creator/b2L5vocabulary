@@ -15,292 +15,802 @@
         .nav-btn.active { background: var(--primary); color: white; }
         .container { width: 95%; max-width: 650px; margin-top: 15px; display: none; flex-direction: column; align-items: center; padding-bottom: 50px; }
         .container.active { display: flex; }
-        
-        /* 翻卡手機放大版 */
-        .flip-card { background-color: transparent; width: 100%; height: 450px; perspective: 1000px; margin-bottom: 15px; cursor: pointer; }
-        .flip-card-inner { position: relative; width: 100%; height: 100%; text-align: center; transition: transform 0.6s; transform-style: preserve-3d; }
+
+        /* ── Learn card ── */
+        .flip-card { background-color: transparent; width: 100%; perspective: 1000px; margin-bottom: 15px; cursor: pointer; }
+        .flip-card-inner { position: relative; width: 100%; text-align: center; transition: transform 0.6s; transform-style: preserve-3d; }
         .flip-card.flipped .flip-card-inner { transform: rotateY(180deg); }
-        .flip-card-front, .flip-card-back { position: absolute; width: 100%; height: 100%; -webkit-backface-visibility: hidden; backface-visibility: hidden; border-radius: 25px; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 25px; box-shadow: 0 10px 20px rgba(0,0,0,0.08); border: 1px solid #eee; }
-        .flip-card-front { background-color: white; }
-        .flip-card-back { background-color: white; transform: rotateY(180deg); }
+        .flip-card-front, .flip-card-back { position: relative; width: 100%; -webkit-backface-visibility: hidden; backface-visibility: hidden; border-radius: 25px; display: flex; flex-direction: column; justify-content: flex-start; align-items: center; padding: 25px 20px 20px; box-shadow: 0 10px 20px rgba(0,0,0,0.08); border: 1px solid #eee; background: white; }
+        .flip-card-back { position: absolute; top: 0; left: 0; transform: rotateY(180deg); overflow-y: auto; max-height: 100%; }
 
-        .word { font-size: 3rem; color: var(--primary); font-weight: bold; margin-bottom: 8px; }
-        .pos { color: #888; font-style: italic; margin-bottom: 12px; font-size: 1.1rem; }
-        .def-en { font-size: 1.15rem; color: #444; line-height: 1.5; font-style: italic; }
-        .def-ch { font-size: 1.8rem; color: #222; font-weight: bold; margin-top: 10px; }
-        .extra-info { font-size: 1.1rem; color: var(--dark); background: #fdf2e9; padding: 15px; border-radius: 15px; width: 100%; margin-top: 25px; text-align: center; border: 1px solid var(--secondary); }
+        .word { font-size: 2.6rem; color: var(--primary); font-weight: bold; margin-bottom: 4px; }
+        .pos { color: #888; font-style: italic; margin-bottom: 8px; font-size: 1rem; }
+        .def-en { font-size: 1rem; color: #444; line-height: 1.5; font-style: italic; text-align: center; }
+        .def-ch { font-size: 1.5rem; color: #222; font-weight: bold; margin-top: 8px; }
+        .sense-block { width: 100%; background: #f8f9fa; border-radius: 12px; padding: 12px 14px; margin-top: 10px; text-align: left; border-left: 3px solid var(--primary); }
+        .sense-block + .sense-block { border-left-color: var(--secondary); margin-top: 8px; }
+        .sense-label { font-size: 0.8rem; font-weight: bold; color: var(--primary); text-transform: uppercase; margin-bottom: 4px; }
+        .sense-block:nth-child(2) .sense-label { color: var(--secondary); }
+        .sense-def-en { font-size: 0.9rem; color: #555; font-style: italic; }
+        .sense-def-ch { font-size: 1.1rem; color: #222; font-weight: bold; margin-top: 3px; }
+        .collocation-box { width: 100%; background: #eef6ff; border-radius: 10px; padding: 10px 14px; margin-top: 8px; font-size: 0.88rem; color: #334; border: 1px dashed #a0c4f1; }
+        .collocation-box strong { color: var(--primary); }
+        .example-box { width: 100%; background: #fffbf0; border-radius: 10px; padding: 10px 14px; margin-top: 6px; font-size: 0.88rem; color: #555; border: 1px solid #ffe5a0; }
+        .extra-info { font-size: 1rem; color: var(--dark); background: #fdf2e9; padding: 12px; border-radius: 15px; width: 100%; margin-top: 12px; text-align: center; border: 1px solid var(--secondary); }
+        .hint { color: var(--primary); font-size: 0.85rem; margin-top: 18px; font-weight: bold; }
+        .word-counter { font-size: 0.85rem; color: #999; margin-bottom: 6px; }
 
-        /* Match 網格修正版 */
+        /* ── Match ── */
         #match-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; width: 100%; }
-        .match-item { background: white; border: 2px solid #E5E7EB; border-radius: 12px; min-height: 90px; display: flex; align-items: center; justify-content: center; font-size: 0.95rem; font-weight: bold; cursor: pointer; text-align: center; padding: 8px; transition: 0.2s; user-select: none; }
+        .match-item { background: white; border: 2px solid #E5E7EB; border-radius: 12px; min-height: 80px; display: flex; align-items: center; justify-content: center; font-size: 0.9rem; font-weight: bold; cursor: pointer; text-align: center; padding: 8px; transition: 0.2s; user-select: none; }
         .match-item.selected { border-color: var(--primary); background: #EBF4FF; }
         .match-item.correct { visibility: hidden !important; opacity: 0 !important; pointer-events: none !important; }
         .match-item.wrong { background: var(--danger) !important; color: white !important; border-color: var(--danger) !important; }
 
-        .btn-main { width: 100%; min-height: 60px; border-radius: 15px; font-size: 1.2rem; font-weight: bold; margin-bottom: 12px; cursor: pointer; border: none; }
-        .feedback { min-height: 45px; margin-top: 10px; font-weight: bold; font-size: 1.3rem; text-align: center; }
+        .btn-main { width: 100%; min-height: 55px; border-radius: 15px; font-size: 1.1rem; font-weight: bold; margin-bottom: 10px; cursor: pointer; border: none; }
+        .feedback { min-height: 40px; margin-top: 8px; font-weight: bold; font-size: 1.2rem; text-align: center; }
 
-        .quiz-audio-btn { width: 100px; height: 100px; background: var(--quiz-purple); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 3rem; margin: 10px auto 20px; border: none; cursor: pointer; }
-        .quiz-options { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; width: 100%; }
-        .option-btn { background: white; border: 2px solid #E5E7EB; border-radius: 15px; padding: 15px 10px; font-size: 1rem; cursor: pointer; min-height: 75px; color: #333; font-weight: 500; }
+        /* ── Quiz ── */
+        .quiz-audio-btn { width: 90px; height: 90px; background: var(--quiz-purple); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 2.5rem; margin: 10px auto 16px; border: none; cursor: pointer; }
+        .quiz-options { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; width: 100%; }
+        .option-btn { background: white; border: 2px solid #E5E7EB; border-radius: 15px; padding: 14px 10px; font-size: 0.95rem; cursor: pointer; min-height: 70px; color: #333; font-weight: 500; }
 
-        .report-item { width: 100%; display: flex; justify-content: space-between; align-items: center; padding: 18px 0; border-bottom: 1px solid #EEE; }
-        .report-label { font-weight: bold; color: #555; font-size: 1.1rem; }
-        .report-val { color: var(--primary); font-weight: 800; font-size: 1.2rem; }
+        /* ── Report ── */
+        .report-item { width: 100%; display: flex; justify-content: space-between; align-items: center; padding: 16px 0; border-bottom: 1px solid #EEE; }
+        .report-label { font-weight: bold; color: #555; font-size: 1rem; }
+        .report-val { color: var(--primary); font-weight: 800; font-size: 1.1rem; }
+
+        /* ── Progress bar ── */
+        .progress-wrap { width: 100%; background: #e0e7ef; border-radius: 10px; height: 8px; margin-bottom: 10px; }
+        .progress-bar { height: 8px; border-radius: 10px; background: var(--primary); transition: width 0.4s; }
     </style>
 </head>
 <body>
 
-    <nav>
-        <button class="nav-btn active" onclick="showPage('learn')">Learn</button>
-        <button class="nav-btn" onclick="showPage('game')">Game</button>
-        <button class="nav-btn" onclick="showPage('quiz')">Quiz</button>
-        <button class="nav-btn" onclick="showPage('match')">Match</button>
-        <button class="nav-btn" onclick="showPage('report')">Report</button>
-    </nav>
+<nav>
+    <button class="nav-btn active" onclick="showPage('learn')">Learn</button>
+    <button class="nav-btn" onclick="showPage('game')">Game</button>
+    <button class="nav-btn" onclick="showPage('quiz')">Quiz</button>
+    <button class="nav-btn" onclick="showPage('match')">Match</button>
+    <button class="nav-btn" onclick="showPage('report')">Report</button>
+</nav>
 
-    <div id="learn" class="container active">
-        <div class="flip-card" onclick="this.classList.toggle('flipped')">
-            <div class="flip-card-inner" id="learn-card-inner"></div>
-        </div>
-        <button class="btn-main" style="background:var(--secondary); color:white;" onclick="handleSpeak(); event.stopPropagation();">🔊 Listen (聽音)</button>
-        <button class="btn-main" style="background:var(--primary); color:white;" onclick="handlePractice(); event.stopPropagation();">🎤 Practice (開口練)</button>
-        <div id="learn-feedback" class="feedback"></div>
-        <button class="btn-main" style="background:var(--dark); color:white;" onclick="nextLearnWord(); event.stopPropagation();">Next 單字 →</button>
+<!-- LEARN -->
+<div id="learn" class="container active">
+    <div class="word-counter" id="learn-counter">1 / 30</div>
+    <div class="progress-wrap"><div class="progress-bar" id="learn-progress" style="width:3.3%"></div></div>
+    <div class="flip-card" id="learn-flip" onclick="this.classList.toggle('flipped')">
+        <div class="flip-card-inner" id="learn-card-inner"></div>
     </div>
+    <button class="btn-main" style="background:var(--secondary);color:white;" onclick="handleSpeak();event.stopPropagation();">🔊 Listen（聽音）</button>
+    <button class="btn-main" style="background:var(--primary);color:white;" onclick="handlePractice();event.stopPropagation();">🎤 Practice（開口練）</button>
+    <div id="learn-feedback" class="feedback"></div>
+    <button class="btn-main" style="background:var(--dark);color:white;" onclick="nextLearnWord();event.stopPropagation();">Next 單字 →</button>
+</div>
 
-    <div id="game" class="container">
-        <div style="background:white; border-radius:20px; padding:20px; width:100%; text-align:center; box-shadow:0 8px 15px rgba(0,0,0,0.05);">
-            <div style="display:flex; justify-content:space-between; font-weight:bold; margin-bottom:20px;">
-                <span>Score: <span id="game-score-display">0</span></span>
-                <span style="color:var(--danger);">Time: <span id="game-time-display">60</span>s</span>
-            </div>
-            <div id="game-word-display" class="word" style="margin: 40px 0;">READY?</div>
-            <div id="game-feedback" class="feedback"></div>
+<!-- GAME -->
+<div id="game" class="container">
+    <div style="background:white;border-radius:20px;padding:20px;width:100%;text-align:center;box-shadow:0 8px 15px rgba(0,0,0,0.05);">
+        <div style="display:flex;justify-content:space-between;font-weight:bold;margin-bottom:20px;width:100%;">
+            <span>Score: <span id="game-score-display">0</span></span>
+            <span style="color:var(--danger);">Time: <span id="game-time-display">60</span>s</span>
         </div>
-        <button id="game-start-btn" class="btn-main" style="background:var(--success); color:white; margin-top:20px;" onclick="startGame()">START CHALLENGE</button>
+        <div id="game-word-display" class="word" style="margin:40px 0;">READY?</div>
+        <div id="game-feedback" class="feedback"></div>
     </div>
+    <button id="game-start-btn" class="btn-main" style="background:var(--success);color:white;margin-top:20px;" onclick="startGame()">START CHALLENGE</button>
+</div>
 
-    <div id="quiz" class="container">
-        <div style="background:white; border-radius:20px; padding:20px; width:100%; text-align:center; box-shadow:0 8px 15px rgba(0,0,0,0.05);" id="quiz-main-card">
-            <div style="display:flex; justify-content:space-between; margin-bottom:15px; font-weight:bold; color:#666;">
-                <span>題號: <span id="quiz-num">1</span> / 10</span>
-                <span>得分: <span id="quiz-score-display">0</span></span>
-            </div>
-            <button class="quiz-audio-btn" onclick="playQuizAudio()">🔊</button>
-            <div id="quiz-options" class="quiz-options"></div>
+<!-- QUIZ -->
+<div id="quiz" class="container">
+    <div style="background:white;border-radius:20px;padding:20px;width:100%;text-align:center;box-shadow:0 8px 15px rgba(0,0,0,0.05);" id="quiz-main-card">
+        <div style="display:flex;justify-content:space-between;margin-bottom:15px;font-weight:bold;color:#666;width:100%;">
+            <span>題號: <span id="quiz-num">1</span> / 10</span>
+            <span>得分: <span id="quiz-score-display">0</span></span>
         </div>
-        <div id="quiz-feedback" class="feedback"></div>
-        <button id="quiz-retry-btn" class="btn-main" style="background:var(--primary); color:white; display:none;" onclick="startQuizSession()">Restart Quiz</button>
+        <button class="quiz-audio-btn" onclick="playQuizAudio()">🔊</button>
+        <div id="quiz-options" class="quiz-options"></div>
     </div>
+    <div id="quiz-feedback" class="feedback"></div>
+    <button id="quiz-retry-btn" class="btn-main" style="background:var(--primary);color:white;display:none;" onclick="startQuizSession()">Restart Quiz</button>
+</div>
 
-    <div id="match" class="container">
-        <div style="background:white; border-radius:20px; padding:20px; width:100%; text-align:center; box-shadow:0 8px 15px rgba(0,0,0,0.05);">
-            <div style="display:flex; justify-content:space-between; font-weight:bold; margin-bottom:10px;">
-                <span>Match Game</span>
-                <span style="color:var(--primary);">Time: <span id="match-timer">0</span>s</span>
-            </div>
-            <p style="font-size: 0.9rem; color: var(--dark); margin: 0 0 5px; font-weight: 800;">Please match the vocabulary with its synonym or antonym.</p>
-            <p style="font-size: 0.8rem; color: #666; margin: 0 0 15px;">請選出本課單字的同義字或反義字</p>
-            <div id="match-grid"></div>
+<!-- MATCH -->
+<div id="match" class="container">
+    <div style="background:white;border-radius:20px;padding:20px;width:100%;text-align:center;box-shadow:0 8px 15px rgba(0,0,0,0.05);">
+        <div style="display:flex;justify-content:space-between;font-weight:bold;margin-bottom:10px;">
+            <span>Match Game</span>
+            <span style="color:var(--primary);">Time: <span id="match-timer">0</span>s</span>
         </div>
-        <button id="match-start-btn" class="btn-main" style="background:var(--success); color:white; margin-top:20px;" onclick="startMatchGame()">開始挑戰</button>
-        <div id="match-feedback" class="feedback"></div>
+        <p style="font-size:0.9rem;color:var(--dark);margin:0 0 4px;font-weight:800;">Match the word with its synonym.</p>
+        <p style="font-size:0.8rem;color:#666;margin:0 0 12px;">請選出本課單字的同義字</p>
+        <div id="match-grid"></div>
     </div>
+    <button id="match-start-btn" class="btn-main" style="background:var(--success);color:white;margin-top:20px;" onclick="startMatchGame()">開始挑戰</button>
+    <div id="match-feedback" class="feedback"></div>
+</div>
 
-    <div id="report" class="container">
-        <div style="background:white; border-radius:20px; padding:25px; width:100%; box-shadow:0 8px 15px rgba(0,0,0,0.05);">
-            <h2 style="margin-top:0">Progress Report</h2>
-            <div class="report-item"><span class="report-label">Game 最高分</span><span class="report-val"><span id="best-game">0</span> 分</span></div>
-            <div class="report-item"><span class="report-label">Quiz 最高得分</span><span class="report-val"><span id="best-quiz">0</span> / 100</span></div>
-            <div class="report-item"><span class="report-label">Match 最快紀錄</span><span class="report-val"><span id="best-match">--</span> 秒</span></div>
-        </div>
+<!-- REPORT -->
+<div id="report" class="container">
+    <div style="background:white;border-radius:20px;padding:25px;width:100%;box-shadow:0 8px 15px rgba(0,0,0,0.05);">
+        <h2 style="margin-top:0;">Progress Report</h2>
+        <div class="report-item"><span class="report-label">Game 最高分</span><span class="report-val"><span id="best-game">0</span> 分</span></div>
+        <div class="report-item"><span class="report-label">Quiz 最高得分</span><span class="report-val"><span id="best-quiz">0</span> / 100</span></div>
+        <div class="report-item"><span class="report-label">Match 最快紀錄</span><span class="report-val"><span id="best-match">--</span> 秒</span></div>
+        <div class="report-item"><span class="report-label">Learn 已瀏覽</span><span class="report-val"><span id="best-learn">0</span> 個單字</span></div>
     </div>
+</div>
 
-    <script>
-        const vocabulary = [
-            { word: "truth", pos: "n. sing.", def_en: "a fact that is accepted by most people as being true", def_ch: "真相，事實", syn: "fact, reality", ant: "lie, fiction" },
-            { word: "truthful", pos: "adj.", def_en: "saying only things that are true; honest", def_ch: "誠實的，真實的", syn: "honest, sincere", ant: "dishonest, fake" },
-            { word: "actually", pos: "adv.", def_en: "in fact; used to emphasize what is real", def_ch: "事實上，實際上", syn: "really, virtually", ant: "theoretically" },
-            { word: "conclusion", pos: "n. [C]", def_en: "a decision or opinion after considering all info", def_ch: "結論", syn: "result, end", ant: "start, beginning" },
-            { word: "appeal", pos: "vi.", def_en: "to try to persuade by reminding of what is fair", def_ch: "啟發，打動", syn: "attract, interest", ant: "repel, disgust" },
-            { word: "majority", pos: "n. sing.", def_en: "the largest number of people in a group", def_ch: "大多數，大部分", syn: "most, bulk", ant: "minority" },
-            { word: "major", pos: "adj.", def_en: "more important, bigger, or more serious", def_ch: "主要的，重大的", syn: "important, significant", ant: "minor, trivial" },
-            { word: "commit", pos: "vt.", def_en: "to do something that is considered wrong/illegal", def_ch: "犯下(罪或錯誤)", syn: "execute, perform", ant: "avoid, stop" },
-            { word: "guarantee", pos: "vt.", def_en: "to promise that something will happen", def_ch: "保證，擔保", syn: "promise, assure", ant: "uncertainty" },
-            { word: "opponent", pos: "n. [C]", def_en: "a person who tries to win against another", def_ch: "對手，敵手", syn: "rival, enemy", ant: "ally, partner" },
-            { word: "version", pos: "n. [C]", def_en: "a different form of the same thing", def_ch: "版本，樣式", syn: "form, variant", ant: "original" },
-            { word: "authority", pos: "n. [C]", def_en: "a person whose opinions are respected in a subject", def_ch: "權威人士，專家", syn: "expert, specialist", ant: "amateur, novice" },
-            { word: "relevant", pos: "adj.", def_en: "related to what is being discussed", def_ch: "相關的", syn: "related, pertinent", ant: "irrelevant" },
-            { word: "accurate", pos: "adj.", def_en: "correct and exact in every detail", def_ch: "準確的，正確的", syn: "correct, precise", ant: "wrong, inaccurate" }
-        ];
+<script>
+// ═══════════════════════════════════════════
+// VOCABULARY DATA  (pp.121-126, all 30 items)
+// ═══════════════════════════════════════════
+const vocabulary = [
+    // ── 1. truth ──
+    {
+        word: "truth", pos: "n. sing.",
+        senses: [
+            { def_en: "a fact or an idea that is accepted by most people as being true", def_ch: "真相，事實" }
+        ],
+        collocations: "tell / speak / know the truth",
+        example: "I trust Anna because she always tells the truth.",
+        syn: "fact, reality", ant: "lie, fiction"
+    },
+    // ── 2. truthful ──
+    {
+        word: "truthful", pos: "adj.",
+        senses: [
+            { def_en: "saying only things that are true; honest", def_ch: "誠實的，真實的" }
+        ],
+        collocations: "",
+        example: "From the way Henry avoided eye contact, I knew that he was not being completely truthful with me.",
+        syn: "honest, sincere", ant: "dishonest, fake"
+    },
+    // ── 3. actually ──
+    {
+        word: "actually", pos: "adv.",
+        senses: [
+            { def_en: "in fact; used to emphasize what is real", def_ch: "事實上，實際上" }
+        ],
+        collocations: "",
+        example: "The cookies look delicious, but they actually taste very strange.",
+        syn: "really, in fact", ant: "theoretically"
+    },
+    // ── 4. actual ──
+    {
+        word: "actual", pos: "adj.",
+        senses: [
+            { def_en: "real; used to emphasize the exact or true nature of something", def_ch: "實際的，確切的" }
+        ],
+        collocations: "",
+        example: "Betty wasn't sure of her father's actual shoe size, so she couldn't buy a pair of shoes for him.",
+        syn: "real, exact", ant: "theoretical"
+    },
+    // ── 5. spot (vt.) ──
+    {
+        word: "spot", pos: "vt.",
+        senses: [
+            { def_en: "to notice someone or something, especially when one is looking hard", def_ch: "注意到，看見" }
+        ],
+        collocations: "spot someone doing something",
+        example: "Troy spotted a strange man entering his neighbor's house through the window.",
+        syn: "notice, observe", ant: "miss, overlook"
+    },
+    // ── 6. spot (n.) ──
+    {
+        word: "spot", pos: "n. [C]",
+        senses: [
+            { def_en: "a particular place or area", def_ch: "地點，場所" }
+        ],
+        collocations: "a spot for something",
+        example: "The balcony at Jeff's house is a great spot for a tea party.",
+        syn: "place, site", ant: "nowhere"
+    },
+    // ── 7. conclusion ──
+    {
+        word: "conclusion", pos: "n. [C]",
+        senses: [
+            { def_en: "a decision or an opinion that someone has after all possible information has been carefully considered", def_ch: "結論" }
+        ],
+        collocations: "come to / arrive at / reach / draw a conclusion",
+        example: "During their family meeting, the Wangs came to the conclusion that they would spend their Chinese New Year holiday abroad.",
+        syn: "decision, judgment", ant: "introduction, beginning"
+    },
+    // ── 8. conclude ──
+    {
+        word: "conclude", pos: "vt.",
+        senses: [
+            { def_en: "to decide that something is true after considering the information you have", def_ch: "做出…結論，斷定" }
+        ],
+        collocations: "conclude from something that",
+        example: "Olivia concluded from her research that most of her classmates were not aware of the problem of fake news.",
+        syn: "decide, deduce", ant: "question, doubt"
+    },
+    // ── 9. appeal (vi.) – sense 1 ──
+    {
+        word: "appeal", pos: "vi. ①",
+        senses: [
+            { def_en: "to try to persuade someone to do something by reminding him or her that it is a good or fair thing to do", def_ch: "啟發，打動" }
+        ],
+        collocations: "appeal to something",
+        example: "The speech appealed to people's sense of justice and encouraged them to stand up against unfair treatment.",
+        syn: "attract, interest", ant: "repel, put off"
+    },
+    // ── 10. appeal (vi.) – sense 2 ──
+    {
+        word: "appeal", pos: "vi. ②  /  n. [C]",
+        senses: [
+            { def_en: "to ask for something such as money, help, or information in a serious or urgent way, usually to the public", def_ch: "呼籲，懇求" },
+            { def_en: "(n.) a serious or urgent request", def_ch: "（名）呼籲，懇求" }
+        ],
+        collocations: "appeal to someone for something  /  an appeal for …",
+        example: "The villagers appealed to the government for help. / Mr. and Mrs. Chen made an urgent appeal for more information to find their missing daughter.",
+        syn: "request, plea", ant: "ignore, refuse"
+    },
+    // ── 11. majority ──
+    {
+        word: "majority", pos: "n. sing.",
+        senses: [
+            { def_en: "the largest number of the people or things in a group", def_ch: "大多數，大部分" }
+        ],
+        collocations: "the majority of …",
+        example: "The majority of my classmates are from the same city, while only two of them are from other cities.",
+        syn: "most, bulk", ant: "minority"
+    },
+    // ── 12. major ──
+    {
+        word: "major", pos: "adj.",
+        senses: [
+            { def_en: "more important, bigger, or more serious than other things of the same type", def_ch: "主要的，重大的" }
+        ],
+        collocations: "",
+        example: "One of the major social problems we need to face is the gap between the rich and the poor.",
+        syn: "important, key", ant: "minor, trivial"
+    },
+    // ── 13. commit ──
+    {
+        word: "commit", pos: "vt.",
+        senses: [
+            { def_en: "to do something that is considered wrong or illegal", def_ch: "犯下（罪或錯誤）" }
+        ],
+        collocations: "commit a crime / offense",
+        example: "The man who had committed many crimes was finally caught by the police.",
+        syn: "carry out, perform", ant: "avoid, prevent"
+    },
+    // ── 14. guarantee (vt. / n.) ──
+    {
+        word: "guarantee", pos: "vt.  /  n. [C]",
+        senses: [
+            { def_en: "to promise that something will exist or happen", def_ch: "（動）保證，擔保" },
+            { def_en: "a firm promise that something will happen", def_ch: "（名）承諾，保證" }
+        ],
+        collocations: "guarantee someone something  /  a guarantee that",
+        example: "George believed his excellent performance at work would guarantee him a pay raise. / Ivy gave her teacher a guarantee that she would never cheat again.",
+        syn: "promise, assure", ant: "uncertainty, doubt"
+    },
+    // ── 15. opponent ──
+    {
+        word: "opponent", pos: "n. [C]",
+        senses: [
+            { def_en: "a person who tries to win against another person in a competition or an argument", def_ch: "對手，敵手" }
+        ],
+        collocations: "face an opponent",
+        example: "Our school basketball team will face their strongest opponent ever in the next game.",
+        syn: "rival, adversary", ant: "ally, partner"
+    },
+    // ── 16. version ──
+    {
+        word: "version", pos: "n. [C]",
+        senses: [
+            { def_en: "a form of something that is different from other forms of the same thing", def_ch: "版本，樣式" }
+        ],
+        collocations: "a version of something",
+        example: "Many players are excited to hear that there will be a new version of this popular game.",
+        syn: "form, variant", ant: "original"
+    },
+    // ── 17. reference ──
+    {
+        word: "reference", pos: "n. [C]",
+        senses: [
+            { def_en: "a mention of someone or something in a speech or a piece of writing", def_ch: "提及，說到" }
+        ],
+        collocations: "a reference to …",
+        example: "The author made a reference to the woman he deeply loved at the end of the story.",
+        syn: "mention, allusion", ant: "silence, omission"
+    },
+    // ── 18. refer ──
+    {
+        word: "refer", pos: "vi.",
+        senses: [
+            { def_en: "to mention or speak about someone or something", def_ch: "提及，說到" }
+        ],
+        collocations: "refer to …",
+        example: "The prize winner referred to her family several times in her acceptance speech.",
+        syn: "mention, cite", ant: "ignore, omit"
+    },
+    // ── 19. account ──
+    {
+        word: "account", pos: "n. [C]",
+        senses: [
+            { def_en: "a written or spoken description of something", def_ch: "說明，描述" },
+            { def_en: "an arrangement someone has with a bank to put in or take out money", def_ch: "（銀行、郵局等的）帳戶" }
+        ],
+        collocations: "give / provide / write an account  /  open / close an account",
+        example: "Tracy gave a detailed account of the accident. / Mike opened a bank account in France.",
+        syn: "description, report", ant: "concealment"
+    },
+    // ── 20. shift (vt. / vi.) ──
+    {
+        word: "shift", pos: "vt. / vi.",
+        senses: [
+            { def_en: "(vt.) to change an idea, a subject, or an opinion toward something", def_ch: "（及物）轉移，改變（主意、立場等）" },
+            { def_en: "(vi.) to move from one position or direction to another", def_ch: "（不及物）移動，改變（姿勢、路徑等）" }
+        ],
+        collocations: "shift something to / toward something",
+        example: "Matilda's article shifts the emphasis toward environmental problems. / Ryan shifted uncomfortably on the hotel bed.",
+        syn: "change, move", ant: "stay, remain"
+    },
+    // ── 21. authority ──
+    {
+        word: "authority", pos: "n. [C] / [U]",
+        senses: [
+            { def_en: "(n. [C]) a person whose knowledge and opinions in a particular subject are greatly respected", def_ch: "（可數）權威人士，專家" },
+            { def_en: "(n. [U]) the power to give orders or make decisions", def_ch: "（不可數）權力，權勢" }
+        ],
+        collocations: "an authority on something  /  the authority to do something",
+        example: "Professor Kingsley is regarded as an authority on fox behavior. / The manager has the authority to make decisions herself.",
+        syn: "expert, power", ant: "amateur, powerlessness"
+    },
+    // ── 22. relevant ──
+    {
+        word: "relevant", pos: "adj.",
+        senses: [
+            { def_en: "related to what is being discussed or happening", def_ch: "相關的" }
+        ],
+        collocations: "be relevant to …",
+        example: "The latest economic news was highly relevant to our company.",
+        syn: "related, pertinent", ant: "irrelevant, unrelated"
+    },
+    // ── 23. illustrate ──
+    {
+        word: "illustrate", pos: "vt.",
+        senses: [
+            { def_en: "to explain something by using examples, showing pictures, etc.", def_ch: "（用例子或圖片等）闡述，說明" }
+        ],
+        collocations: "illustrate a concept / point / principle",
+        example: "The teacher gave several examples to illustrate the concept of democracy.",
+        syn: "explain, demonstrate", ant: "confuse, obscure"
+    },
+    // ── 24. illustration ──
+    {
+        word: "illustration", pos: "n. [C]",
+        senses: [
+            { def_en: "a picture in a book, or an example used to explain something", def_ch: "插圖，圖示" }
+        ],
+        collocations: "",
+        example: "With its full-color illustrations, this storybook is fun and easy to read.",
+        syn: "picture, diagram", ant: "blank"
+    },
+    // ── 25. technology ──
+    {
+        word: "technology", pos: "n. [U]",
+        senses: [
+            { def_en: "the use of modern knowledge about science and computers", def_ch: "科技，技術" }
+        ],
+        collocations: "modern / advanced / the latest technology",
+        example: "Thanks to modern technology, we can enjoy a convenient and comfortable life.",
+        syn: "science, engineering", ant: "nature"
+    },
+    // ── 26. technological ──
+    {
+        word: "technological", pos: "adj.",
+        senses: [
+            { def_en: "relating to or involving technology", def_ch: "科技的，技術的" }
+        ],
+        collocations: "technological advances / change / development",
+        example: "The Internet has brought a lot of technological advances to modern society.",
+        syn: "technical, hi-tech", ant: "low-tech"
+    },
+    // ── 27. expert ──
+    {
+        word: "expert", pos: "n. [C]",
+        senses: [
+            { def_en: "someone who is good at or has a lot of knowledge about something", def_ch: "專家" }
+        ],
+        collocations: "an expert on / in something",
+        example: "Perry is an expert in fashion. I always ask for his advice to keep up with the latest styles.",
+        syn: "authority, specialist", ant: "novice, beginner"
+    },
+    // ── 28. therefore ──
+    {
+        word: "therefore", pos: "adv.",
+        senses: [
+            { def_en: "as a result; for that reason", def_ch: "因此，所以" }
+        ],
+        collocations: "",
+        example: "A typhoon is coming. Therefore, we have to cancel the outdoor party.",
+        syn: "thus, hence", ant: "however, nevertheless"
+    },
+    // ── 29. proof ──
+    {
+        word: "proof", pos: "n. [U]",
+        senses: [
+            { def_en: "information that can show something is true or exists", def_ch: "證據，證明" }
+        ],
+        collocations: "have / need / provide proof",
+        example: "Will thinks that Mrs. Jones is the killer, but he doesn't have any proof to confirm his suspicion.",
+        syn: "evidence, confirmation", ant: "disproof"
+    },
+    // ── 30. prove ──
+    {
+        word: "prove", pos: "vt.",
+        senses: [
+            { def_en: "to show that something is definitely true by providing facts or information", def_ch: "證明，證實" }
+        ],
+        collocations: "prove something to someone",
+        example: "Henry moved out to prove his ability to live on his own to his parents.",
+        syn: "verify, confirm", ant: "disprove, refute"
+    },
+    // ── 31. occur ──
+    {
+        word: "occur", pos: "vi.",
+        senses: [
+            { def_en: "to happen, especially unexpectedly", def_ch: "發生" }
+        ],
+        collocations: "",
+        example: "A traffic accident occurred when Jeff was on his way to school, so he was late for class.",
+        syn: "happen, take place", ant: "cease, stop"
+    },
+    // ── 32. accurate ──
+    {
+        word: "accurate", pos: "adj.",
+        senses: [
+            { def_en: "correct and exact in every detail", def_ch: "準確的，正確的" }
+        ],
+        collocations: "",
+        example: "The food critic tried his best to give an accurate description of every dish in the MICHELIN-starred restaurant.",
+        syn: "precise, exact", ant: "inaccurate, wrong"
+    },
+    // ── 33. accuracy ──
+    {
+        word: "accuracy", pos: "n. [U]",
+        senses: [
+            { def_en: "the quality of being correct and exact", def_ch: "精準，精確" }
+        ],
+        collocations: "",
+        example: "Kane has scored many goals thanks to his great kicking accuracy.",
+        syn: "precision, exactness", ant: "inaccuracy, error"
+    }
+];
 
-        let bestScores = { game: 0, quiz: 0, match: null };
-        let quizUsed = [], matchUsed = [];
-        
-        // --- 容錯化語音初始化 ---
-        const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition || null;
-        let mainRec = null;
-        if (SpeechRec) {
-            try {
-                mainRec = new SpeechRec();
-                mainRec.lang = 'en-US';
-                mainRec.interimResults = false;
-            } catch(e) { console.log("Speech initialization failed"); }
+// ═══════════════════════════════════════════
+// GLOBALS
+// ═══════════════════════════════════════════
+let bestScores = { game: 0, quiz: 0, match: null, learnSeen: 0 };
+let quizUsed = [], quizSession = {};
+let learnIdx = 0;
+let gameActive = false, gameScore = 0;
+const TOTAL = vocabulary.length;
+
+const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition || null;
+let mainRec = null;
+if (SpeechRec) { try { mainRec = new SpeechRec(); mainRec.lang = 'en-US'; mainRec.continuous = false; mainRec.interimResults = false; } catch(e){} }
+
+// ═══════════════════════════════════════════
+// NAVIGATION
+// ═══════════════════════════════════════════
+function showPage(id) {
+    document.querySelectorAll('.container').forEach(c => c.classList.remove('active'));
+    document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    document.querySelectorAll('.nav-btn').forEach(b => {
+        if (b.innerText.toLowerCase() === id) b.classList.add('active');
+    });
+    window.speechSynthesis.cancel();
+    gameActive = false;
+    clearInterval(window._matchInt);
+    if (mainRec) { try { mainRec.abort(); } catch(e){} }
+    if (id === 'report') updateReport();
+    if (id === 'learn')  updateLearn();
+    if (id === 'quiz')   startQuizSession();
+}
+
+// ═══════════════════════════════════════════
+// SPEECH
+// ═══════════════════════════════════════════
+function globalSpeak(text, rate) {
+    window.speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(text);
+    u.lang = 'en-US';
+    u.rate = rate || 0.85;
+    window.speechSynthesis.speak(u);
+}
+
+// ═══════════════════════════════════════════
+// LEARN
+// ═══════════════════════════════════════════
+function updateLearn() {
+    const d = vocabulary[learnIdx];
+    const card = document.getElementById('learn-flip');
+    if (card) card.classList.remove('flipped');
+
+    // counter & progress
+    document.getElementById('learn-counter').innerText = `${learnIdx + 1} / ${TOTAL}`;
+    document.getElementById('learn-progress').style.width = `${((learnIdx + 1) / TOTAL) * 100}%`;
+    if (learnIdx + 1 > bestScores.learnSeen) bestScores.learnSeen = learnIdx + 1;
+
+    // FRONT: word + pos + first English definition
+    const frontHtml = `
+        <div class="word">${d.word}</div>
+        <div class="pos">${d.pos}</div>
+        <div class="def-en">${d.senses[0].def_en}</div>
+        <p class="hint">（Click to reveal Chinese 點擊看中文）</p>`;
+
+    // BACK: all senses + collocations + example + syn/ant
+    let sensesHtml = d.senses.map((s, i) => `
+        <div class="sense-block">
+            ${d.senses.length > 1 ? `<div class="sense-label">Sense ${i + 1}</div>` : ''}
+            <div class="sense-def-en">${s.def_en}</div>
+            <div class="sense-def-ch">${s.def_ch}</div>
+        </div>`).join('');
+
+    let colHtml = d.collocations ? `<div class="collocation-box"><strong>📌 Collocation：</strong>${d.collocations}</div>` : '';
+    let exHtml  = d.example      ? `<div class="example-box">📖 ${d.example}</div>` : '';
+
+    const backHtml = `
+        <div class="word" style="font-size:2rem;">${d.word}</div>
+        ${sensesHtml}
+        ${colHtml}
+        ${exHtml}
+        <div class="extra-info" style="margin-top:12px;">
+            <strong>同義字：</strong>${d.syn}<br><br>
+            <strong>反義字：</strong>${d.ant}
+        </div>`;
+
+    document.getElementById('learn-card-inner').innerHTML = `
+        <div class="flip-card-front">${frontHtml}</div>
+        <div class="flip-card-back">${backHtml}</div>`;
+
+    // auto-size card height
+    setTimeout(() => {
+        const front = document.querySelector('.flip-card-front');
+        const back  = document.querySelector('.flip-card-back');
+        const h = Math.max(front ? front.scrollHeight : 0, back ? back.scrollHeight : 0, 320);
+        document.getElementById('learn-card-inner').style.height = h + 'px';
+    }, 50);
+
+    document.getElementById('learn-feedback').innerText = '';
+}
+
+function nextLearnWord() {
+    learnIdx = (learnIdx + 1) % TOTAL;
+    updateLearn();
+}
+
+function handleSpeak() {
+    globalSpeak(vocabulary[learnIdx].word);
+}
+
+function handlePractice() {
+    if (!mainRec) {
+        document.getElementById('learn-feedback').innerText = '⚠️ 此裝置不支援語音辨識';
+        return;
+    }
+    const fb = document.getElementById('learn-feedback');
+    fb.style.color = '#888'; fb.innerText = 'Listening… 🎤';
+    mainRec.onresult = (e) => {
+        const heard = e.results[0][0].transcript.toLowerCase().trim();
+        const target = vocabulary[learnIdx].word.toLowerCase();
+        if (heard.includes(target)) {
+            fb.style.color = 'var(--success)'; fb.innerText = '✅ Correct! Great job!';
+        } else {
+            fb.style.color = 'var(--danger)'; fb.innerText = `❌ Heard: "${heard}" — Try again!`;
         }
+    };
+    mainRec.onerror = () => { fb.style.color = 'var(--danger)'; fb.innerText = '⚠️ Could not hear you. Try again.'; };
+    try { mainRec.start(); } catch(e){}
+}
 
-        function showPage(id) {
-            document.querySelectorAll('.container').forEach(c => c.classList.remove('active'));
-            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-            document.getElementById(id).classList.add('active');
-            const btns = document.querySelectorAll('.nav-btn');
-            btns.forEach(b => { if(b.innerText.toLowerCase() === id) b.classList.add('active'); });
-            
-            window.speechSynthesis.cancel();
+// ═══════════════════════════════════════════
+// GAME  (speech challenge)
+// ═══════════════════════════════════════════
+function startGame() {
+    if (!mainRec) {
+        document.getElementById('game-feedback').innerText = '⚠️ 此裝置不支援語音辨識';
+        return;
+    }
+    gameActive = true; gameScore = 0; let time = 60;
+    document.getElementById('game-score-display').innerText = '0';
+    document.getElementById('game-start-btn').style.display = 'none';
+    document.getElementById('game-feedback').innerText = '';
+
+    const timer = setInterval(() => {
+        time--;
+        document.getElementById('game-time-display').innerText = time;
+        if (time <= 0 || !gameActive) {
+            clearInterval(timer);
             gameActive = false;
-            clearInterval(window.matchInt);
-            
-            if (mainRec) { try { mainRec.stop(); } catch(e) {} }
-            
-            if(id === 'report') updateReport();
-            if(id === 'learn') updateLearn();
-            if(id === 'quiz') startQuizSession();
+            try { mainRec.abort(); } catch(e){}
+            if (gameScore > bestScores.game) bestScores.game = gameScore;
+            document.getElementById('game-word-display').innerText = '🎉 Time Up!';
+            document.getElementById('game-feedback').innerText = `Final score: ${gameScore}`;
+            document.getElementById('game-start-btn').style.display = 'block';
         }
+    }, 1000);
+    loadNextGameWord();
+}
 
-        function globalSpeak(text) { window.speechSynthesis.cancel(); const u = new SpeechSynthesisUtterance(text); u.lang = 'en-US'; u.rate = 0.9; window.speechSynthesis.speak(u); }
-
-        // --- Learn ---
-        let learnIdx = 0;
-        function updateLearn() {
-            const d = vocabulary[learnIdx];
-            const card = document.querySelector('.flip-card');
-            if(card) card.classList.remove('flipped');
-            let extraHtml = `<div class="extra-info"><strong>同義字</strong><br>${d.syn}`;
-            if(d.ant) extraHtml += `<br><br><strong>反義字</strong><br>${d.ant}`;
-            extraHtml += `</div>`;
-            document.getElementById('learn-card-inner').innerHTML = `
-                <div class="flip-card-front"><div class="word" style="font-size:2.8rem;">${d.word}</div><div class="pos">${d.pos}</div><div class="def-en">${d.def_en}</div><p style="color:var(--primary); font-size:0.9rem; margin-top:25px; font-weight:bold;">(Click to See Chinese / 點擊看中文)</p></div>
-                <div class="flip-card-back"><div class="word" style="font-size:2.8rem;">${d.word}</div><div class="def-ch">${d.def_ch}</div>${extraHtml}</div>`;
-            document.getElementById('learn-feedback').innerText = "";
-        }
-        function nextLearnWord() { learnIdx = (learnIdx + 1) % vocabulary.length; updateLearn(); }
-        function handleSpeak() { globalSpeak(vocabulary[learnIdx].word); }
-        function handlePractice() {
-            if (!mainRec) { alert("此瀏覽器不支援語音辨識，請使用 Chrome 開啟。"); return; }
-            const fb = document.getElementById('learn-feedback'); fb.innerText = "Listening... 🎤";
-            mainRec.onresult = (e) => {
-                const heard = e.results[0][0].transcript.toLowerCase();
-                if(heard.includes(vocabulary[learnIdx].word.toLowerCase())) { fb.innerText = "Correct! ✨"; fb.style.color = "var(--success)"; }
-                else { fb.innerText = "Try again! ❌"; fb.style.color = "var(--danger)"; }
-            };
-            try { mainRec.start(); } catch(e) {}
-        }
-
-        // --- Game ---
-        let gameActive = false, gameScore = 0;
-        function startGame() {
-            if (!mainRec) { alert("語音辨識不支援。"); return; }
-            gameActive = true; gameScore = 0; let time = 60;
-            document.getElementById('game-score-display').innerText = "0";
-            document.getElementById('game-start-btn').style.display = 'none';
-            const timer = setInterval(() => {
-                time--; document.getElementById('game-time-display').innerText = time;
-                if(time <= 0 || !gameActive) { clearInterval(timer); gameActive = false; if(gameScore > bestScores.game) bestScores.game = gameScore; document.getElementById('game-start-btn').style.display = 'block'; }
-            }, 1000);
+function loadNextGameWord() {
+    if (!gameActive) return;
+    const target = vocabulary[Math.floor(Math.random() * TOTAL)].word;
+    document.getElementById('game-word-display').innerText = target;
+    mainRec.onresult = (e) => {
+        if (e.results[0][0].transcript.toLowerCase().includes(target.toLowerCase())) {
+            gameScore += 10;
+            document.getElementById('game-score-display').innerText = gameScore;
+            document.getElementById('game-feedback').innerText = '✅ +10';
+            setTimeout(() => { if (gameActive) document.getElementById('game-feedback').innerText = ''; }, 500);
             loadNextGameWord();
         }
-        function loadNextGameWord() {
-            if(!gameActive) return;
-            let target = vocabulary[Math.floor(Math.random()*vocabulary.length)].word;
-            document.getElementById('game-word-display').innerText = target;
-            mainRec.onresult = (e) => { if(e.results[0][0].transcript.toLowerCase().includes(target.toLowerCase())) { gameScore += 10; document.getElementById('game-score-display').innerText = gameScore; loadNextGameWord(); } };
-            mainRec.onend = () => { if(gameActive) try { mainRec.start(); } catch(e) {} };
-            try { mainRec.start(); } catch(e) {}
-        }
+    };
+    mainRec.onend = () => { if (gameActive) try { mainRec.start(); } catch(e){} };
+    try { mainRec.start(); } catch(e){}
+}
 
-        // --- Quiz ---
-        function startQuizSession() {
-            quizUsed = []; quizSession = { num: 1, score: 0 };
-            document.getElementById('quiz-retry-btn').style.display='none';
-            document.getElementById('quiz-main-card').style.display='block';
-            loadQuiz();
-        }
-        function loadQuiz() {
-            const container = document.getElementById('quiz-options'); const fb = document.getElementById('quiz-feedback');
-            if (quizSession.num > 10) {
-                if(quizSession.score > bestScores.quiz) bestScores.quiz = quizSession.score;
-                fb.innerText = "測驗完成！"; document.getElementById('quiz-main-card').style.display='none'; document.getElementById('quiz-retry-btn').style.display='block'; return;
+// ═══════════════════════════════════════════
+// QUIZ  (listen → pick Chinese)
+// ═══════════════════════════════════════════
+function startQuizSession() {
+    quizUsed = [];
+    quizSession = { num: 1, score: 0 };
+    document.getElementById('quiz-retry-btn').style.display = 'none';
+    document.getElementById('quiz-main-card').style.display = 'block';
+    document.getElementById('quiz-feedback').innerText = '';
+    loadQuiz();
+}
+
+function loadQuiz() {
+    const fb = document.getElementById('quiz-feedback');
+    if (quizSession.num > 10) {
+        if (quizSession.score > bestScores.quiz) bestScores.quiz = quizSession.score;
+        fb.innerText = `🎉 測驗完成！得分 ${quizSession.score} / 100`;
+        document.getElementById('quiz-main-card').style.display = 'none';
+        document.getElementById('quiz-retry-btn').style.display = 'block';
+        return;
+    }
+    fb.innerText = '';
+    document.getElementById('quiz-num').innerText = quizSession.num;
+    document.getElementById('quiz-score-display').innerText = quizSession.score;
+
+    const pool   = vocabulary.filter(v => !quizUsed.includes(v.word));
+    const target = pool[Math.floor(Math.random() * pool.length)];
+    quizSession.curTarget = target;
+    quizUsed.push(target.word);
+
+    // correct answer is always sense[0] Chinese
+    const correct = target.senses[0].def_ch;
+    const opts = [correct];
+    while (opts.length < 4) {
+        const r = vocabulary[Math.floor(Math.random() * TOTAL)].senses[0].def_ch;
+        if (!opts.includes(r)) opts.push(r);
+    }
+    opts.sort(() => 0.5 - Math.random());
+
+    const container = document.getElementById('quiz-options');
+    container.innerHTML = '';
+    opts.forEach(opt => {
+        const b = document.createElement('button');
+        b.className = 'option-btn';
+        b.innerText = opt;
+        b.onclick = () => {
+            if (opt === correct) {
+                b.style.background = '#e6ffed'; b.style.borderColor = 'var(--success)';
+                quizSession.score += 10;
+                document.getElementById('quiz-score-display').innerText = quizSession.score;
+                fb.style.color = 'var(--success)'; fb.innerText = '✅ 答對了！';
+            } else {
+                b.style.background = '#FFEBEE'; b.style.borderColor = 'var(--danger)';
+                fb.style.color = 'var(--danger)'; fb.innerText = `❌ 答錯了！正確答案：${correct}`;
             }
-            document.getElementById('quiz-num').innerText = quizSession.num; document.getElementById('quiz-score-display').innerText = quizSession.score;
-            let pool = vocabulary.filter(v => !quizUsed.includes(v.word));
-            let target = pool[Math.floor(Math.random()*pool.length)];
-            quizSession.curTarget = target; quizUsed.push(target.word);
-            let opts = [target.def_ch];
-            while(opts.length < 4) { let r = vocabulary[Math.floor(Math.random()*vocabulary.length)].def_ch; if(!opts.includes(r)) opts.push(r); }
-            opts.sort(()=>0.5-Math.random()); container.innerHTML = '';
-            opts.forEach(opt => {
-                const b = document.createElement('button'); b.className = 'option-btn'; b.innerText = opt;
-                b.onclick = () => { if(opt === target.def_ch) { quizSession.score += 10; document.getElementById('quiz-score-display').innerText = quizSession.score; quizSession.num++; setTimeout(loadQuiz, 800); } else { b.style.background = "#FFEBEE"; } };
-                container.appendChild(b);
-            });
-            globalSpeak(target.word);
-        }
+            // disable all buttons briefly
+            container.querySelectorAll('.option-btn').forEach(x => x.disabled = true);
+            quizSession.num++;
+            setTimeout(loadQuiz, 1200);
+        };
+        container.appendChild(b);
+    });
+    globalSpeak(target.word);
+}
 
-        // --- Match (3*4) ---
-        let matchActive = false, mTime = 0, firstCard = null, matchesFound = 0;
-        function startMatchGame() {
-            document.getElementById('match-start-btn').style.display = 'none';
-            document.getElementById('match-feedback').innerText = "";
-            matchesFound = 0; mTime = 0; matchActive = true; firstCard = null;
-            clearInterval(window.matchInt);
-            window.matchInt = setInterval(() => { mTime++; document.getElementById('match-timer').innerText = mTime; }, 1000);
-            
-            let pool = vocabulary.filter(v => !matchUsed.includes(v.word));
-            if(pool.length < 6) { matchUsed = []; pool = vocabulary; }
-            let sub = pool.sort(() => 0.5 - Math.random()).slice(0, 6);
-            sub.forEach(s => matchUsed.push(s.word));
+function playQuizAudio() {
+    if (quizSession.curTarget) globalSpeak(quizSession.curTarget.word);
+}
 
-            let cards = [];
-            sub.forEach(v => { cards.push({ id: v.word, text: v.word }); cards.push({ id: v.word, text: v.syn.split(',')[0] }); });
-            cards.sort(() => 0.5 - Math.random());
+// ═══════════════════════════════════════════
+// MATCH  (word ↔ synonym)
+// ═══════════════════════════════════════════
+let matchUsed = [];
 
-            const grid = document.getElementById('match-grid'); grid.innerHTML = '';
-            cards.forEach(item => {
-                const div = document.createElement('div');
-                div.className = 'match-item'; div.innerText = item.text;
-                div.onclick = () => {
-                    if (!matchActive || div.classList.contains('correct') || div === firstCard?.div) return;
-                    div.classList.add('selected');
-                    if (!firstCard) { firstCard = { div, item }; } 
-                    else {
-                        if (firstCard.item.id === item.id) {
-                            div.classList.add('correct'); firstCard.div.classList.add('correct');
-                            matchesFound++;
-                            if (matchesFound === 6) { 
-                                clearInterval(window.matchInt); if (!bestScores.match || mTime < bestScores.match) bestScores.match = mTime;
-                                document.getElementById('match-feedback').innerText = "Finish! " + mTime + "s";
-                                document.getElementById('match-start-btn').style.display = 'block';
-                            }
-                            firstCard = null;
-                        } else {
-                            matchActive = false; div.classList.add('wrong'); firstCard.div.classList.add('wrong');
-                            setTimeout(() => { 
-                                div.classList.remove('selected', 'wrong'); 
-                                firstCard.div.classList.remove('selected', 'wrong'); 
-                                firstCard = null; matchActive = true; 
-                            }, 600);
-                        }
+function startMatchGame() {
+    document.getElementById('match-start-btn').style.display = 'none';
+    document.getElementById('match-feedback').innerText = '';
+    let mTime = 0, matchesFound = 0, firstCard = null;
+    clearInterval(window._matchInt);
+    document.getElementById('match-timer').innerText = '0';
+    window._matchInt = setInterval(() => {
+        mTime++;
+        document.getElementById('match-timer').innerText = mTime;
+    }, 1000);
+
+    // pick 6 unique words that have distinct first synonyms
+    let pool = vocabulary.filter(v => !matchUsed.includes(v.word));
+    if (pool.length < 6) { matchUsed = []; pool = [...vocabulary]; }
+    const sub = pool.sort(() => 0.5 - Math.random()).slice(0, 6);
+    sub.forEach(s => matchUsed.push(s.word));
+
+    // build 12 cards: word + first synonym
+    let cards = [];
+    sub.forEach(v => {
+        const synWord = v.syn.split(',')[0].trim();
+        cards.push({ id: v.word, text: v.word,    type: 'word' });
+        cards.push({ id: v.word, text: synWord,   type: 'syn'  });
+    });
+    cards.sort(() => 0.5 - Math.random());
+
+    const grid = document.getElementById('match-grid');
+    grid.innerHTML = '';
+    cards.forEach(item => {
+        const div = document.createElement('div');
+        div.className = 'match-item';
+        div.innerText = item.text;
+        if (item.type === 'syn') div.style.color = '#777';
+        div.onclick = () => {
+            if (div.classList.contains('correct') || div === firstCard?.div) return;
+            div.classList.add('selected');
+            if (!firstCard) {
+                firstCard = { div, item };
+            } else {
+                if (firstCard.item.id === item.id && firstCard.item.type !== item.type) {
+                    // correct pair
+                    div.classList.add('correct');
+                    firstCard.div.classList.add('correct');
+                    matchesFound++;
+                    if (matchesFound === 6) {
+                        clearInterval(window._matchInt);
+                        if (!bestScores.match || mTime < bestScores.match) bestScores.match = mTime;
+                        document.getElementById('match-feedback').innerText = `🎉 完成！用時 ${mTime} 秒`;
+                        setTimeout(() => { document.getElementById('match-start-btn').style.display = 'block'; }, 600);
                     }
-                }; grid.appendChild(div);
-            });
-        }
-        function playQuizAudio() { if(quizSession.curTarget) globalSpeak(quizSession.curTarget.word); }
-        function updateReport() {
-            document.getElementById('best-game').innerText = bestScores.game;
-            document.getElementById('best-quiz').innerText = bestScores.quiz;
-            document.getElementById('best-match').innerText = bestScores.match || "--";
-        }
-        updateLearn();
-    </script>
+                    firstCard = null;
+                } else {
+                    // wrong pair
+                    div.classList.add('wrong');
+                    firstCard.div.classList.add('wrong');
+                    const fd = firstCard.div, fd2 = div;
+                    setTimeout(() => {
+                        fd.classList.remove('selected', 'wrong');
+                        fd2.classList.remove('selected', 'wrong');
+                        firstCard = null;
+                    }, 700);
+                }
+            }
+        };
+        grid.appendChild(div);
+    });
+}
+
+// ═══════════════════════════════════════════
+// REPORT
+// ═══════════════════════════════════════════
+function updateReport() {
+    document.getElementById('best-game').innerText  = bestScores.game;
+    document.getElementById('best-quiz').innerText  = bestScores.quiz;
+    document.getElementById('best-match').innerText = bestScores.match || '--';
+    document.getElementById('best-learn').innerText = bestScores.learnSeen;
+}
+
+// init
+updateLearn();
+</script>
 </body>
 </html>
